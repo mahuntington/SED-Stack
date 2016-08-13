@@ -1,0 +1,19 @@
+{
+  "name": "sed-stack",
+  "version": "0.0.0",
+  "description": "Sequelize, Express, D3",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahuntington/SED-Stack.git"
+  },
+  "author": "Matt Huntington",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mahuntington/SED-Stack/issues"
+  },
+  "homepage": "https://github.com/mahuntington/SED-Stack#readme"
+}
