@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/mahuntington/SED-Stack/issues"
   },
-  "homepage": "https://github.com/mahuntington/SED-Stack#readme"
+  "homepage": "https://github.com/mahuntington/SED-Stack#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
 }
