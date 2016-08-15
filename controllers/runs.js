@@ -11,8 +11,8 @@ controller.post('/', function(req, res){
 	Runs.create({
 		date: new Date(1980, 6, 20),
 		distance: 15.5
-	}).then(function(data){
-		res.json(data);
+	}).then(function(createdRun){
+		res.json(createdRun);
 	});;
 });
 
