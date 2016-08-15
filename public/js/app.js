@@ -36,17 +36,17 @@ d3.select('svg').on('click', function(d){
 	logRun({
 		date: date, 
 		distance: distance
-	});
+	}, render);
 });
 
 // Log a new run in the server
-var logRun = function(runObject){
+var logRun = function(runObject, callback){
 	d3.xhr('/runs')
 		.header("Content-Type", "application/json")
 		.post(
 			JSON.stringify(runObject),
 			function(err, data){
-				console.log(JSON.parse(data.response));
+				callback();
 			}
 		);
 
