@@ -24,7 +24,7 @@ xScale.range([0, WIDTH]);
 xScale.domain([MIN_DATE, MAX_DATE]);
 
 
-// SVG Click
+// SVG click handler
 d3.select('svg').on('click', function(d){
 	
 	var x = d3.event.offsetX;
@@ -33,15 +33,13 @@ d3.select('svg').on('click', function(d){
 	var distance = yScale.invert(y);
 	var date = xScale.invert(x);
 
-	console.log("x=" + x + " date=" + date);
-	console.log("y=" + y + " distance=" + distance);
-
 	logRun({
 		date: date, 
 		distance: distance
 	});
 });
 
+// Log a new run in the server
 var logRun = function(runObject){
 	d3.xhr('/runs')
 		.header("Content-Type", "application/json")
