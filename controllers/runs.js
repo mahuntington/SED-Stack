@@ -16,4 +16,14 @@ controller.post('/', function(req, res){
 	});;
 });
 
+controller.delete('/:id', function(req, res){
+	Runs.destroy({
+		where: {
+			id: req.params.id
+		}
+	}).then(function(didSucceed){
+		res.json(didSucceed);
+	});
+});
+
 module.exports = controller;
