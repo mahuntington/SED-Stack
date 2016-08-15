@@ -51,3 +51,20 @@ var logRun = function(runObject){
 		);
 
 };
+
+//var dateParser = d3.time.format("%Y-%m-%d %H:%M:%S.%L +00:00");
+var render = function(){
+	d3.json('/runs', function(error, data){
+		var circles = d3.select('svg').selectAll('circle')
+			.data(data).enter()
+			.append('circle').attr('r', 5);
+		circles.attr('cx', function(datum, index){
+			return xScale(new Date(datum.date));
+		});
+		circles.attr('cy', function(datum, index){
+			return yScale(datum.distance);
+		});
+	});
+};
+
+render();
