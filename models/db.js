@@ -1,8 +1,7 @@
 var Sequelize = require('sequelize');
 
-var db = new Sequelize('sedstack', 'matthuntington', '', {
-	host: 'localhost',
-	dialect: 'postgres'
-});
+var DB_URL = process.env.DATABASE_URL || 'postgres://matthuntington@localhost:5432/sedstack';
+
+var db = new Sequelize(DB_URL);
 
 module.exports = db;
