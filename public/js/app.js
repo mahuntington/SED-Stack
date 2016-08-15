@@ -52,6 +52,7 @@ var logRun = function(runObject){
 
 };
 
+//Render circles
 //var dateParser = d3.time.format("%Y-%m-%d %H:%M:%S.%L +00:00");
 var render = function(){
 	d3.json('/runs', function(error, data){
