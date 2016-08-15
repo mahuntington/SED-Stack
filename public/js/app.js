@@ -35,5 +35,21 @@ d3.select('svg').on('click', function(d){
 
 	console.log("x=" + x + " date=" + date);
 	console.log("y=" + y + " distance=" + distance);
+
+	logRun({
+		date: date, 
+		distance: distance
+	});
 });
-}
+
+var logRun = function(runObject){
+	d3.xhr('/runs')
+		.header("Content-Type", "application/json")
+		.post(
+			JSON.stringify(runObject),
+			function(err, data){
+				console.log(JSON.parse(data.response));
+			}
+		);
+
+};
