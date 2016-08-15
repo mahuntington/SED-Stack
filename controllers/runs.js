@@ -1,13 +1,19 @@
 var controller = require('express').Router();
-var runs = require('../models/run.js');
+var Runs = require('../models/run.js');
 
 controller.get('/', function(req, res){
-	res.json(runs);
+	Runs.findAll().then(function(data){
+		res.json(data);
+	});
 });
 
 controller.post('/', function(req, res){
-	runs.push(req.body);
-	res.json(runs);
+	Runs.create({
+		date: new Date(1980, 6, 20),
+		distance: 15.5
+	}).then(function(data){
+		res.json(data);
+	});;
 });
 
 module.exports = controller;
