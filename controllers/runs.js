@@ -23,4 +23,17 @@ controller.delete('/:id', function(req, res){
 	});
 });
 
+controller.put('/:id', function(req, res){
+	Runs.update(
+		req.body,
+		{
+			where: {
+				id: req.params.id
+			}
+		}
+	).then(function(data){
+		res.json(data);
+	});
+});
+
 module.exports = controller;
