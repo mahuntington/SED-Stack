@@ -31,8 +31,8 @@ controller.put('/:id', function(req, res){
 				id: req.params.id
 			}
 		}
-	).then(function(data){
-		res.json(data);
+	).then(function(didSucceed){
+		res.json(didSucceed);
 	});
 });
 
