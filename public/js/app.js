@@ -56,6 +56,7 @@ var render = function(){
 	d3.json('/runs', function(error, data){
 		var circles = d3.select('svg').selectAll('circle')
 			.data(data, function(d){
+				//match data based on d.id, not index
 				return d.id
 			});
 		circles
@@ -68,6 +69,7 @@ var render = function(){
 				return yScale(datum.distance);
 			});
 		circles.exit().remove();
+		//attach event handlers after circle creation
 		attachDeleteHandlers();
 	});
 };
