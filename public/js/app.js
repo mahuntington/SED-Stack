@@ -93,7 +93,6 @@ var attachDragHandlers = function(){
 	var drag = d3.behavior.drag()
 		.on('dragend', function(d){
 			d3.event.sourceEvent.preventDefault();
-			d3.event.sourceEvent.stopPropagation();
 
 			//set date and distance
 			var date = xScale.invert(d3.event.sourceEvent.offsetX);
