@@ -70,6 +70,7 @@ var render = function(){
 			});
 		circles.exit().remove();
 		//attach event handlers after circle creation
+		attachDragHandlers();
 		attachDeleteHandlers();
 	});
 };
@@ -84,4 +85,30 @@ var attachDeleteHandlers = function(){
 			.header("Content-Type", "application/json")
 			.send('DELETE', render);
 	});
+};
+
+var attachDragHandlers = function(){
+	var drag = d3.behavior.drag()
+		.on('dragend', function(d){
+			d3.event.sourceEvent.preventDefault();
+			d3.event.sourceEvent.stopPropagation();
+
+			var date = xScale.invert(d3.event.sourceEvent.offsetX);
+			var distance = yScale.invert(d3.event.sourceEvent.offsetY);
+			console.log('date='+date+'; distance='+distance);
+			d.date = date;
+			d.distance = distance;
+			d3.xhr('/runs/'+d.id)
+				.header("Content-Type","application/json")
+				.send('PUT', JSON.stringify(d), render);
+		})
+		.on('drag', function(d){
+			d3.event.sourceEvent.preventDefault();
+			d3.event.sourceEvent.stopPropagation();
+			var dx = d3.event.x;
+			var dy = d3.event.y;
+			d3.select(this).attr('cx',dx);
+			d3.select(this).attr('cy',dy);
+		});
+	d3.selectAll('circle').call(drag);
 };
