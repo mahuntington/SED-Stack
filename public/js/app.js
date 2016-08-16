@@ -104,8 +104,6 @@ var attachDragHandlers = function(){
 				.send('PUT', JSON.stringify(d), render);
 		})
 		.on('drag', function(d){
-			d3.event.sourceEvent.preventDefault();
-			d3.event.sourceEvent.stopPropagation();
 			var dx = d3.event.x;
 			var dy = d3.event.y;
 			d3.select(this).attr('cx',dx);
