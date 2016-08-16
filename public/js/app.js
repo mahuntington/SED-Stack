@@ -36,7 +36,7 @@ d3.select('svg').on('click', function(d){
 	logRun({
 		date: date, 
 		distance: distance
-	}, addCircles);
+	}, render);
 });
 
 // Log a new run in the server
@@ -52,30 +52,34 @@ var logRun = function(runObject, callback){
 
 //Render circles
 //var dateParser = d3.time.format("%Y-%m-%d %H:%M:%S.%L +00:00");
-var addCircles = function(){
+var render = function(){
 	d3.json('/runs', function(error, data){
 		var circles = d3.select('svg').selectAll('circle')
-			.data(data).enter()
-			.append('circle').attr('r', 5);
-		circles.attr('cx', function(datum, index){
-			return xScale(new Date(datum.date));
-		});
-		circles.attr('cy', function(datum, index){
-			return yScale(datum.distance);
-		});
+			.data(data, function(d){
+				return d.id
+			});
+		circles
+			.enter()
+			.append('circle').attr('r', 5)
+			.attr('cx', function(datum, index){
+				return xScale(new Date(datum.date));
+			})
+			.attr('cy', function(datum, index){
+				return yScale(datum.distance);
+			});
+		circles.exit().remove();
 		attachDeleteHandler();
 	});
 };
 
-addCircles();
+render();
 
 //Attach click handler to circles
 var attachDeleteHandler = function(){
 	d3.selectAll('circle').on('click', function(d){
 		d3.event.stopPropagation();
-		d3.select(this).remove();
 		d3.xhr('/runs/'+d.id)
 			.header("Content-Type", "application/json")
-			.send('DELETE');
+			.send('DELETE', render);
 	});
 };
