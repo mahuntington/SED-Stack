@@ -68,14 +68,14 @@ var render = function(){
 				return yScale(datum.distance);
 			});
 		circles.exit().remove();
-		attachDeleteHandler();
+		attachDeleteHandlers();
 	});
 };
 
 render();
 
 //Attach click handler to circles
-var attachDeleteHandler = function(){
+var attachDeleteHandlers = function(){
 	d3.selectAll('circle').on('click', function(d){
 		d3.event.stopPropagation();
 		d3.xhr('/runs/'+d.id)
