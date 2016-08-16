@@ -97,7 +97,6 @@ var attachDragHandlers = function(){
 
 			var date = xScale.invert(d3.event.sourceEvent.offsetX);
 			var distance = yScale.invert(d3.event.sourceEvent.offsetY);
-			console.log('date='+date+'; distance='+distance);
 			d.date = date;
 			d.distance = distance;
 			d3.xhr('/runs/'+d.id)
