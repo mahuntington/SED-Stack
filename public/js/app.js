@@ -16,7 +16,7 @@ d3.select('svg').style({
 
 // Create scales
 var yScale = d3.scale.linear();
-yScale.range([HEIGHT, 0]);
+yScale.range([HEIGHT, 0]); //max height matches min data value, since max height is at the bottom
 yScale.domain([MIN_DISTANCE, MAX_DISTANCE]);
 
 var xScale = d3.time.scale();
@@ -44,6 +44,7 @@ var logRun = function(runObject, callback){
 	d3.xhr('/runs')
 		.header("Content-Type", "application/json")
 		.post(
+			//must turn data object into string
 			JSON.stringify(runObject),
 			callback
 		);
@@ -54,20 +55,25 @@ var logRun = function(runObject, callback){
 //var dateParser = d3.time.format("%Y-%m-%d %H:%M:%S.%L +00:00");
 var render = function(){
 	d3.json('/runs', function(error, data){
-		var circles = d3.select('svg').selectAll('circle')
+		//bind circles with data
+		var circles = d3.select('svg').selectAll('circle')//ghost selction of circles
 			.data(data, function(d){
 				//match data based on d.id, not index
 				return d.id
 			});
+		//add extra circles if there is extra data
 		circles
 			.enter()
 			.append('circle').attr('r', 5)
 			.attr('cx', function(datum, index){
+				//convert date value into pixel value
 				return xScale(new Date(datum.date));
 			})
 			.attr('cy', function(datum, index){
+				//convert distance datum into pixel value
 				return yScale(datum.distance);
 			});
+		//if any circles remain that don't match data, remove them
 		circles.exit().remove();
 		//attach event handlers after circle creation
 		attachDragHandlers();
@@ -80,8 +86,12 @@ render();
 //Attach click handler to circles
 var attachDeleteHandlers = function(){
 	d3.selectAll('circle').on('click', function(d){
+		//prevent svg click for run creation
 		d3.event.stopPropagation();
+	
+		//if not dragging (event's default is not prevented)
 		if(!d3.event.defaultPrevented){
+			//mkae API call
 			d3.xhr('/runs/'+d.id)
 				.header("Content-Type", "application/json")
 				.send('DELETE', render);
@@ -89,12 +99,15 @@ var attachDeleteHandlers = function(){
 	});
 };
 
+//Attach drag handler to circles
 var attachDragHandlers = function(){
+	//create drag behavior
 	var drag = d3.behavior.drag()
 		.on('dragend', function(d){
+			//prevent default for deleting run handler
 			d3.event.sourceEvent.preventDefault();
 
-			//set date and distance
+			//set new date and distance on datum object
 			var date = xScale.invert(d3.event.sourceEvent.offsetX);
 			var distance = yScale.invert(d3.event.sourceEvent.offsetY);
 			d.date = date;
@@ -103,13 +116,15 @@ var attachDragHandlers = function(){
 			//make api call
 			d3.xhr('/runs/'+d.id)
 				.header("Content-Type","application/json")
-				.send('PUT', JSON.stringify(d), render);
+				.send('PUT', JSON.stringify(d), render);//pass alterted 'd' object to API
 		})
 		.on('drag', function(d){
+			//change position of cirlce while draging
 			var dx = d3.event.x;
 			var dy = d3.event.y;
 			d3.select(this).attr('cx',dx);
 			d3.select(this).attr('cy',dy);
 		});
+	//attach drag behavior to circle elements
 	d3.selectAll('circle').call(drag);
 };
