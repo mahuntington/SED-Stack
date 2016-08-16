@@ -95,10 +95,13 @@ var attachDragHandlers = function(){
 			d3.event.sourceEvent.preventDefault();
 			d3.event.sourceEvent.stopPropagation();
 
+			//set date and distance
 			var date = xScale.invert(d3.event.sourceEvent.offsetX);
 			var distance = yScale.invert(d3.event.sourceEvent.offsetY);
 			d.date = date;
 			d.distance = distance;
+
+			//make api call
 			d3.xhr('/runs/'+d.id)
 				.header("Content-Type","application/json")
 				.send('PUT', JSON.stringify(d), render);
