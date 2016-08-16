@@ -65,7 +65,19 @@ var render = function(){
 		circles.attr('cy', function(datum, index){
 			return yScale(datum.distance);
 		});
+		attachDeleteHandler();
 	});
 };
 
 render();
+
+//Attach click handler to circles
+var attachDeleteHandler = function(){
+	d3.selectAll('circle').on('click', function(d){
+		d3.event.stopPropagation();
+		d3.select(this).remove();
+		d3.xhr('/runs/'+d.id)
+			.header("Content-Type", "application/json")
+			.send('DELETE');
+	});
+};
