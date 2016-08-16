@@ -81,9 +81,11 @@ render();
 var attachDeleteHandlers = function(){
 	d3.selectAll('circle').on('click', function(d){
 		d3.event.stopPropagation();
-		d3.xhr('/runs/'+d.id)
-			.header("Content-Type", "application/json")
-			.send('DELETE', render);
+		if(!d3.event.defaultPrevented){
+			d3.xhr('/runs/'+d.id)
+				.header("Content-Type", "application/json")
+				.send('DELETE', render);
+		}
 	});
 };
 
