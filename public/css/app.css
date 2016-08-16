@@ -3,7 +3,7 @@ svg {
 }
 
 svg circle {
-	transition: all 1s ease-in-out;
+	transition: transform 1s ease-in-out, fill 1s linear;
 	transform-origin: 50% 50%;
 }
 
