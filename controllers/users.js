@@ -1,7 +1,7 @@
 var controller = require('express').Router();
 
 controller.get('/new', function(req, res){
-	res.send('users!');
+	res.render('users/new.ejs');
 });
 
 module.exports = controller;
