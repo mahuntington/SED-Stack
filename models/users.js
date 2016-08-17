@@ -2,7 +2,10 @@ var Sequelize = require('sequelize');
 var db = require('./db.js');
 
 var Users = db.define('user', {
-	username: Sequelize.STRING,
+	username: { 
+		type: Sequelize.STRING,
+		unique: true
+	},
 	password: Sequelize.STRING
 });
 
