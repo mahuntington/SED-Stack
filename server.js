@@ -12,7 +12,9 @@ app.use(session({
 app.use(express.static('public'));
 
 app.get('/', function(req, res){
-	res.render('index.ejs');
+	res.render('index.ejs', {
+		currentUser: req.session.currentUser
+	});
 });
 
 var runsController = require('./controllers/runs.js');
