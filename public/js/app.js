@@ -8,25 +8,22 @@ var MIN_DISTANCE = 0;
 var MIN_DATE = new Date('2016-1-1');
 var MAX_DATE = new Date('2017-1-1');
 
-d3.select('svg').style({
-	height: HEIGHT,
-	width: WIDTH
-});
+d3.select('svg').style('height', HEIGHT).style('width', WIDTH);
 
 
 // Create scales
-var yScale = d3.scale.linear();
+var yScale = d3.scaleLinear();
 yScale.range([HEIGHT, 0]); //max height matches min data value, since max height is at the bottom
 yScale.domain([MIN_DISTANCE, MAX_DISTANCE]);
 
-var xScale = d3.time.scale();
+var xScale = d3.scaleTime();
 xScale.range([0, WIDTH]);
 xScale.domain([MIN_DATE, MAX_DATE]);
 
 
 // SVG click handler
 d3.select('svg').on('click', function(d){
-	
+
 	var x = d3.event.offsetX;
 	var y = d3.event.offsetY;
 
@@ -41,7 +38,7 @@ d3.select('svg').on('click', function(d){
 
 // Log a new run in the server
 var logRun = function(runObject, callback){
-	d3.xhr('/runs')
+	d3.request('/runs')
 		.header("Content-Type", "application/json")
 		.post(
 			//must turn data object into string
@@ -64,7 +61,7 @@ var render = function(){
 		//add extra circles if there is extra data
 		circles
 			.enter()
-			.append('circle').attr('r', 5)
+			.append('circle')
 			.attr('cx', function(datum, index){
 				//convert date value into pixel value
 				return xScale(new Date(datum.date));
@@ -92,7 +89,7 @@ var attachDeleteHandlers = function(){
 		//if not dragging (event's default is not prevented)
 		if(!d3.event.defaultPrevented){
 			//mkae API call
-			d3.xhr('/runs/'+d.id)
+			d3.request('/runs/'+d.id)
 				.header("Content-Type", "application/json")
 				.send('DELETE', render);
 		}
@@ -102,19 +99,19 @@ var attachDeleteHandlers = function(){
 //Attach drag handler to circles
 var attachDragHandlers = function(){
 	//create drag behavior
-	var drag = d3.behavior.drag()
-		.on('dragend', function(d){
+	var drag = d3.drag()
+		.on('end', function(d){
 			//prevent default for deleting run handler
 			d3.event.sourceEvent.preventDefault();
 
 			//set new date and distance on datum object
-			var date = xScale.invert(d3.event.sourceEvent.offsetX);
-			var distance = yScale.invert(d3.event.sourceEvent.offsetY);
+			var date = xScale.invert(d3.event.x);
+			var distance = yScale.invert(d3.event.y);
 			d.date = date;
 			d.distance = distance;
 
 			//make api call
-			d3.xhr('/runs/'+d.id)
+			d3.request('/runs/'+d.id)
 				.header("Content-Type","application/json")
 				.send('PUT', JSON.stringify(d), render);//pass alterted 'd' object to API
 		})

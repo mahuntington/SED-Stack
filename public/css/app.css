@@ -3,11 +3,12 @@ svg {
 }
 
 svg circle {
-	transition: transform 0.5s ease-in-out, fill 0.5s linear;
+	r:5;
+	transition: r 0.5s ease-in-out, fill 0.5s linear;
 	transform-origin: 50% 50%;
 }
 
 circle:hover {
 	fill:blue;
-	transform: scale(3);
+	r:15;
 }
