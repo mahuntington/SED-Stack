@@ -120,10 +120,10 @@ var attachDragHandlers = function(){
 		})
 		.on('drag', function(d){
 			//change position of cirlce while draging
-			var dx = d3.event.x;
-			var dy = d3.event.y;
-			d3.select(this).attr('cx',dx);
-			d3.select(this).attr('cy',dy);
+			var x = d3.event.x;
+			var y = d3.event.y;
+			d3.select(this).attr('cx',x);
+			d3.select(this).attr('cy',y);
 		});
 	//attach drag behavior to circle elements
 	d3.selectAll('circle').call(drag);
