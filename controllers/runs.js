@@ -1,5 +1,8 @@
 var controller = require('express').Router();
+var bodyParser = require('body-parser');
 var Runs = require('../models/run.js');
+
+controller.use(bodyParser.json());
 
 controller.get('/', function(req, res){
 	Runs.findAll().then(function(data){
