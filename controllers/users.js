@@ -13,7 +13,7 @@ controller.post('/', function(req, res){
 	req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
 	Users.create(req.body).then(function(createdUser){
 		res.redirect('/');
-	});;
+	});
 });
 
 module.exports = controller;
