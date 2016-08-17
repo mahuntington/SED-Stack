@@ -12,7 +12,7 @@ controller.get('/new', function(req, res){
 controller.post('/', function(req, res){
 	req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
 	Users.create(req.body).then(function(createdUser){
-		res.json(createdUser);
+		res.redirect('/');
 	});;
 });
 
