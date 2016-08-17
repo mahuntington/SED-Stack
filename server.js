@@ -1,6 +1,13 @@
 var express = require('express');
+var session = require('express-session');
 var app = express();
 var PORT = process.env.PORT || 3000;
+
+app.use(session({
+	secret: "seakrett",
+	resave: false,
+	saveUninitialized: false
+}));
 
 app.use(express.static('public'));
 
