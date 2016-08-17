@@ -1,5 +1,6 @@
 var controller = require('express').Router();
 var bodyParser = require('body-parser');
+var Users = require('../models/users.js');
 
 controller.use(bodyParser.urlencoded({ extended: false }))
 
@@ -8,7 +9,9 @@ controller.get('/new', function(req, res){
 });
 
 controller.post('/', function(req, res){
-	res.send(req.body);
+	Users.create(req.body).then(function(createdUser){
+		res.json(createdUser);
+	});;
 });
 
 module.exports = controller;
