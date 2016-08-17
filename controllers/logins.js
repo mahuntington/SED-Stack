@@ -15,7 +15,7 @@ controller.post('/', function(req, res){
 		}
 	}).then(function(foundUser){
 		req.session.currentUser = foundUser;
-		res.redirect('/app.html');
+		res.redirect('/');
 	});
 });
 
