@@ -9,6 +9,9 @@ app.use(bodyParser.json());
 var runsController = require('./controllers/runs.js');
 app.use('/runs/', runsController);
 
+var usersController = require('./controllers/users.js');
+app.use('/users/', usersController);
+
 app.listen(PORT, function(){
 	console.log('listening on port ' + PORT);
 });
