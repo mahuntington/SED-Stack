@@ -1,4 +1,5 @@
 var controller = require('express').Router();
+var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
 var Users = require('../models/users.js');
 
@@ -14,7 +15,9 @@ controller.post('/', function(req, res){
 			username:req.body.username
 		}
 	}).then(function(foundUser){
-		req.session.currentUser = foundUser;
+		if(bcrypt.compareSync(req.body.password, foundUser.password)){
+			req.session.currentUser = foundUser;
+		}
 		res.redirect('/');
 	});
 });
