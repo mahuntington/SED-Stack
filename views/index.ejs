@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html>
 	<body>
-		<h1>Welcome to Run Tracker</h1>
+		<h1>
+			Welcome to Run Tracker
+			<% if(currentUser) { %>
+				<%=currentUser.username%>
+			<% } %>
+		</h1>
 		<nav>
 			<ul>
-				<li><a href="/users/new">Sign Up</a></li>
-				<li><a href="/logins/new">Log In</a></li>
+				<% if(currentUser) { %>
+					<li><a href="/app.html">View The App</a></li>
+				<% } else { %>
+					<li><a href="/users/new">Sign Up</a></li>
+					<li><a href="/logins/new">Log In</a></li>
+				<% } %>
 			</ul>
 		</nav>
 	</body>
