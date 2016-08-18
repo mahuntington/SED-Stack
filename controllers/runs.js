@@ -6,8 +6,10 @@ var Runs = require('../models/run.js');
 controller.use(bodyParser.json());
 
 controller.get('/', function(req, res){
-	Runs.findAll().then(function(runs){
-		res.json(runs);
+	Users.findById(req.session.currentUser.id).then(function(user){
+		user.getRuns().then(function(runs){
+			res.json(runs);
+		});
 	});
 });
 
