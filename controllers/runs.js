@@ -5,8 +5,8 @@ var Runs = require('../models/run.js');
 controller.use(bodyParser.json());
 
 controller.get('/', function(req, res){
-	Runs.findAll().then(function(data){
-		res.json(data);
+	Runs.findAll().then(function(runs){
+		res.json(runs);
 	});
 });
 
