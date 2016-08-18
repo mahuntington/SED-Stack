@@ -1,5 +1,6 @@
 var controller = require('express').Router();
 var bodyParser = require('body-parser');
+var Users = require('../models/users.js');
 var Runs = require('../models/run.js');
 
 controller.use(bodyParser.json());
@@ -11,9 +12,13 @@ controller.get('/', function(req, res){
 });
 
 controller.post('/', function(req, res){
-	Runs.create(req.body).then(function(createdRun){
-		res.json(createdRun);
-	});;
+	Users.findById(req.session.currentUser.id).then(function(user){
+		Runs.create(req.body).then(function(createdRun){
+			user.addRun(createdRun).then(function(){
+				res.json(createdRun);
+			});
+		});;
+	});
 });
 
 controller.delete('/:id', function(req, res){
