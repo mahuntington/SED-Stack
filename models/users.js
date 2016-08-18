@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize');
+var Runs = require('./run.js');
 var db = require('./db.js');
 
 var Users = db.define('user', {
@@ -8,6 +9,8 @@ var Users = db.define('user', {
 	},
 	password: Sequelize.STRING
 });
+
+Users.hasMany(Runs, { as: 'Runs' });
 
 db.sync();
 
