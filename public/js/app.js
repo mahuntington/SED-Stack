@@ -1,22 +1,22 @@
 // Initialize app
-var WIDTH = 800;
-var HEIGHT = 600;
+var WIDTH = 800; //width of svg
+var HEIGHT = 600; //height of svg
 
-var MAX_DISTANCE = 5;
-var MIN_DISTANCE = 0;
+var MAX_DISTANCE = 5; //max distance that can be run
+var MIN_DISTANCE = 0; //min distance that can be run
 
-var MIN_DATE = new Date('2016-1-1');
-var MAX_DATE = new Date('2017-1-1');
+var MIN_DATE = new Date('2016-1-1'); //min date of entry
+var MAX_DATE = new Date('2017-1-1'); //max date of entry
 
-d3.select('svg').style('height', HEIGHT).style('width', WIDTH);
+d3.select('svg').style('height', HEIGHT).style('width', WIDTH); //set height/width of svg.  Could do this in CSS, but values are already here for other reasons
 
 
 // Create scales
-var yScale = d3.scaleLinear();
+var yScale = d3.scaleLinear(); //create a linear scale
 yScale.range([HEIGHT, 0]); //max height matches min data value, since max height is at the bottom
-yScale.domain([MIN_DISTANCE, MAX_DISTANCE]);
+yScale.domain([MIN_DISTANCE, MAX_DISTANCE]); //min distance matches min data value, same for max values
 
-var xScale = d3.scaleTime();
+var xScale = d3.scaleTime(); //set up scale for x coords and dates
 xScale.range([0, WIDTH]);
 xScale.domain([MIN_DATE, MAX_DATE]);
 
@@ -24,34 +24,35 @@ xScale.domain([MIN_DATE, MAX_DATE]);
 // SVG click handler
 d3.select('svg').on('click', function(d){
 
-	var x = d3.event.offsetX;
+	//d3.event contains data for click event
+	var x = d3.event.offsetX; //use offset to get point within svg container
 	var y = d3.event.offsetY;
 
-	var distance = yScale.invert(y);
-	var date = xScale.invert(x);
+	var distance = yScale.invert(y); //get distance from click point in svg
+	var date = xScale.invert(x); //get date from click point in svg
 
-	logRun({
-		date: date, 
+	logRun({ //log a run with data
+		date: date,
 		distance: distance
-	}, render);
+	}, render); //call the render callback
 });
 
 // Log a new run in the server
 var logRun = function(runObject, callback){
-	d3.request('/runs')
-		.header("Content-Type", "application/json")
+	d3.request('/runs') //make a request to the server
+		.header("Content-Type", "application/json") //tell the server we're sending JSON data
 		.post(
 			//must turn data object into string
 			JSON.stringify(runObject),
-			callback
+			callback //call whatever callback is passed
 		);
 
 };
 
 //Render circles
-//var dateParser = d3.time.format("%Y-%m-%d %H:%M:%S.%L +00:00");
+//var dateParser = d3.time.format("%Y-%m-%d %H:%M:%S.%L +00:00"); -- can use this if date format is not proper
 var render = function(){
-	d3.json('/runs', function(error, data){
+	d3.json('/runs', function(error, data){ //get all run data
 		//bind circles with data
 		var circles = d3.select('svg').selectAll('circle')//ghost selction of circles
 			.data(data, function(d){
@@ -60,38 +61,38 @@ var render = function(){
 			});
 		//add extra circles if there is extra data
 		circles
-			.enter()
-			.append('circle')
+			.enter() //for all data that has not yet been mapped...
+			.append('circle') //create a circle
 			.attr('cx', function(datum, index){
-				//convert date value into pixel value
+				//convert date value into pixel value and set it to cx
 				return xScale(new Date(datum.date));
 			})
 			.attr('cy', function(datum, index){
-				//convert distance datum into pixel value
+				//convert distance datum into pixel value and set it to cy
 				return yScale(datum.distance);
 			});
 		//if any circles remain that don't match data, remove them
 		circles.exit().remove();
 		//attach event handlers after circle creation
-		attachDragHandlers();
-		attachDeleteHandlers();
+		attachDragHandlers(); //attach drag handlers
+		attachDeleteHandlers(); //attach delete handlers
 	});
 };
 
-render();
+render(); //render on page load
 
 //Attach click handler to circles
 var attachDeleteHandlers = function(){
 	d3.selectAll('circle').on('click', function(d){
 		//prevent svg click for run creation
 		d3.event.stopPropagation();
-	
+
 		//if not dragging (event's default is not prevented)
 		if(!d3.event.defaultPrevented){
 			//mkae API call
 			d3.request('/runs/'+d.id)
-				.header("Content-Type", "application/json")
-				.send('DELETE', render);
+				.header("Content-Type", "application/json") //we're sending data
+				.send('DELETE', render); //send a DELETE request
 		}
 	});
 };
@@ -100,31 +101,32 @@ var attachDeleteHandlers = function(){
 var attachDragHandlers = function(){
 	//create drag behavior
 	var drag = d3.drag()
-		.on('end', function(d){
+		.on('end', function(d){ //when dragging has finished
 			//prevent default for deleting run handler
 			d3.event.sourceEvent.preventDefault();
 
 			//set new date and distance on datum object
-			var date = xScale.invert(d3.event.x);
+			var date = xScale.invert(d3.event.x); //d3.event.x is used for drag behavior... different from normal click event
 			var distance = yScale.invert(d3.event.y);
-			d.date = date;
+			d.date = date; //update data on element
 			d.distance = distance;
 
-			//make api call
+			//make api call to update DB
 			d3.request('/runs/'+d.id)
-				.header("Content-Type","application/json")
+				.header("Content-Type","application/json") //we're sending JSON
 				.send('PUT', JSON.stringify(d), render);//pass alterted 'd' object to API
 		})
-		.on('drag', function(d){
-			//change position of cirlce while draging
-			var x = d3.event.x;
-			var y = d3.event.y;
-			d3.select(this).attr('cx',x);
+		.on('drag', function(d){ //while dragging...
+			//change position of cirlce
+			var x = d3.event.x; //get new position from d3.event.x
+			var y = d3.event.y; //get new position from d3.event.y
+			d3.select(this).attr('cx',x); //update element visually
 			d3.select(this).attr('cy',y);
 		});
 	//attach drag behavior to circle elements
 	d3.selectAll('circle').call(drag);
 };
 
-d3.select('svg').append('g').attr('transform', 'translate(0,' + HEIGHT + ')').call(d3.axisBottom(xScale));
-d3.select('svg').append('g').call(d3.axisLeft(yScale));
+//create axes
+d3.select('svg').append('g').attr('transform', 'translate(0,' + HEIGHT + ')').call(d3.axisBottom(xScale)); //x axes must be moved to bottom of svg
+d3.select('svg').append('g').call(d3.axisLeft(yScale)); //y axis is good as it is
