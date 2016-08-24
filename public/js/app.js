@@ -141,7 +141,7 @@ d3.select('svg').append('g').attr('id', 'y-axis').call(yAxis); //y axis is good 
 
 //callback for zooming
 var zoomCallback = function(){
-	lastTransform = d3.event.transform;
+	lastTransform = d3.event.transform; //save the transform for later inversion with clicks
 	d3.select('#points').attr("transform", d3.event.transform); //apply transform to g element containing circles
 	//recalculate the axes
 	d3.select('#x-axis').call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
