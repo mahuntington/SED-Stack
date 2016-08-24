@@ -128,15 +128,17 @@ var attachDragHandlers = function(){
 };
 
 //create axes
-var xAxis = d3.axisBottom(xScale);
-var yAxis = d3.axisLeft(yScale);
-d3.select('svg').append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + HEIGHT + ')').call(xAxis); //x axes must be moved to bottom of svg
-d3.select('svg').append('g').attr('id', 'y-axis').call(yAxis); //y axis is good as it is
+var xAxis = d3.axisBottom(xScale); //create axis, not yet applied
+var yAxis = d3.axisLeft(yScale); //create axis, not yet applied
+d3.select('svg').append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + HEIGHT + ')').call(xAxis); //apply xAxis, also, x axis must be moved to bottom of svg
+d3.select('svg').append('g').attr('id', 'y-axis').call(yAxis); //y axis is good as it is, apply it
 
+//callback for zooming
 var zoomCallback = function(){
-	d3.select('#points').attr("transform", d3.event.transform);
+	d3.select('#points').attr("transform", d3.event.transform); //apply transform to g element containing circles
+	//recalculate the axes
 	d3.select('#x-axis').call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
 	d3.select('#y-axis').call(yAxis.scale(d3.event.transform.rescaleY(yScale)));
 }
-var zoom = d3.zoom().on('zoom', zoomCallback);
-d3.select('svg').call(zoom);
+var zoom = d3.zoom().on('zoom', zoomCallback); //create zoom behavior
+d3.select('svg').call(zoom); //apply zoom behavior to svg

@@ -14,8 +14,8 @@
 		<% if(currentUser) { %>
 			<!-- show app if user is logged in -->
 			<svg>
-				<svg id="container">
-					<g id="points"></g>
+				<svg id="container"><!-- crops circles within axes -->
+					<g id="points"></g><!-- used for zooming -->
 				</svg>
 			</svg>
 			<form action="/logins?_method=DELETE" method="POST">

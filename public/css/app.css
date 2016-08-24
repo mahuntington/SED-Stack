@@ -2,7 +2,7 @@ svg {
 	margin:40px; /* give it some margin to show off the axes */
 	overflow:visible; /* axes will extend beyond the svg cropping area.  Show them anyway */
 }
-#container {
+#container { /* crop circles within axes */
 	overflow: hidden;
 }
 svg circle {
