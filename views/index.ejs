@@ -13,7 +13,9 @@
 		</h1>
 		<% if(currentUser) { %>
 			<!-- show app if user is logged in -->
-			<svg></svg>
+			<svg>
+				<g id="points"></g>
+			</svg>
 			<form action="/logins?_method=DELETE" method="POST">
 				<!-- log out button -->
 				<input type="submit" value="Log Out"/>

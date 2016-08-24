@@ -54,7 +54,7 @@ var logRun = function(runObject, callback){
 var render = function(){
 	d3.json('/runs', function(error, data){ //get all run data
 		//bind circles with data
-		var circles = d3.select('svg').selectAll('circle')//ghost selction of circles
+		var circles = d3.select('#points').selectAll('circle')//ghost selction of circles
 			.data(data, function(d){
 				//match data based on d.id, not index
 				return d.id
@@ -128,5 +128,15 @@ var attachDragHandlers = function(){
 };
 
 //create axes
-d3.select('svg').append('g').attr('transform', 'translate(0,' + HEIGHT + ')').call(d3.axisBottom(xScale)); //x axes must be moved to bottom of svg
-d3.select('svg').append('g').call(d3.axisLeft(yScale)); //y axis is good as it is
+var xAxis = d3.axisBottom(xScale);
+var yAxis = d3.axisLeft(yScale);
+d3.select('svg').append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + HEIGHT + ')').call(xAxis); //x axes must be moved to bottom of svg
+d3.select('svg').append('g').attr('id', 'y-axis').call(yAxis); //y axis is good as it is
+
+var zoomCallback = function(){
+	d3.select('#points').attr("transform", d3.event.transform);
+	d3.select('#x-axis').call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
+	d3.select('#y-axis').call(yAxis.scale(d3.event.transform.rescaleY(yScale)));
+}
+var zoom = d3.zoom().on('zoom', zoomCallback);
+d3.select('svg').call(zoom);
