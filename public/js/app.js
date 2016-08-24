@@ -22,11 +22,17 @@ xScale.domain([MIN_DATE, MAX_DATE]);
 
 
 // SVG click handler
+var lastTransform = null;
 d3.select('svg').on('click', function(d){
 
 	//d3.event contains data for click event
 	var x = d3.event.offsetX; //use offset to get point within svg container
 	var y = d3.event.offsetY;
+
+	if(lastTransform !== null){
+		x = lastTransform.invertX(d3.event.offsetX); //use offset to get point within svg container
+		y = lastTransform.invertY(d3.event.offsetY);
+	}
 
 	var distance = yScale.invert(y); //get distance from click point in svg
 	var date = xScale.invert(x); //get date from click point in svg
@@ -135,6 +141,7 @@ d3.select('svg').append('g').attr('id', 'y-axis').call(yAxis); //y axis is good 
 
 //callback for zooming
 var zoomCallback = function(){
+	lastTransform = d3.event.transform;
 	d3.select('#points').attr("transform", d3.event.transform); //apply transform to g element containing circles
 	//recalculate the axes
 	d3.select('#x-axis').call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
