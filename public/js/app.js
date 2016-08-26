@@ -57,35 +57,34 @@ var logRun = function(runObject, callback){
 
 //Render circles
 //var dateParser = d3.time.format("%Y-%m-%d %H:%M:%S.%L +00:00"); -- can use this if date format is not proper
+var generateCircles = function(error, data){
+	//bind circles with data
+	var circles = d3.select('#points').selectAll('circle')//ghost selction of circles
+		.data(data, function(d){
+			//match data based on d.id, not index
+			return d.id
+		});
+	//add extra circles if there is extra data
+	circles
+		.enter() //for all data that has not yet been mapped...
+		.append('circle') //create a circle
+		.attr('cx', function(datum, index){
+			//convert date value into pixel value and set it to cx
+			return xScale(new Date(datum.date));
+		})
+		.attr('cy', function(datum, index){
+			//convert distance datum into pixel value and set it to cy
+			return yScale(datum.distance);
+		});
+	//if any circles remain that don't match data, remove them
+	circles.exit().remove();
+	//attach event handlers after circle creation
+	attachDragHandlers(); //attach drag handlers
+	attachDeleteHandlers(); //attach delete handlers
+}
 var render = function(){
-	d3.json('/runs', function(error, data){ //get all run data
-		//bind circles with data
-		var circles = d3.select('#points').selectAll('circle')//ghost selction of circles
-			.data(data, function(d){
-				//match data based on d.id, not index
-				return d.id
-			});
-		//add extra circles if there is extra data
-		circles
-			.enter() //for all data that has not yet been mapped...
-			.append('circle') //create a circle
-			.attr('cx', function(datum, index){
-				//convert date value into pixel value and set it to cx
-				return xScale(new Date(datum.date));
-			})
-			.attr('cy', function(datum, index){
-				//convert distance datum into pixel value and set it to cy
-				return yScale(datum.distance);
-			});
-		//if any circles remain that don't match data, remove them
-		circles.exit().remove();
-		//attach event handlers after circle creation
-		attachDragHandlers(); //attach drag handlers
-		attachDeleteHandlers(); //attach delete handlers
-	});
+	d3.json('/runs', generateCircles);
 };
-
-render(); //render on page load
 
 //Attach click handler to circles
 var attachDeleteHandlers = function(){
@@ -133,19 +132,38 @@ var attachDragHandlers = function(){
 	d3.selectAll('circle').call(drag);
 };
 
-//create axes
-var xAxis = d3.axisBottom(xScale); //create axis, not yet applied
-var yAxis = d3.axisLeft(yScale); //create axis, not yet applied
-d3.select('svg').append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + HEIGHT + ')').call(xAxis); //apply xAxis, also, x axis must be moved to bottom of svg
-d3.select('svg').append('g').attr('id', 'y-axis').call(yAxis); //y axis is good as it is, apply it
+d3.json('/runs', function(error, data){
+	var distanceDomain = d3.extent(data, function(element){
+		return element.distance;
+	});
+	var dateDomain = d3.extent(data, function(element){
+		return new Date(element.date);
+	});
 
-//callback for zooming
-var zoomCallback = function(){
-	lastTransform = d3.event.transform; //save the transform for later inversion with clicks
-	d3.select('#points').attr("transform", d3.event.transform); //apply transform to g element containing circles
-	//recalculate the axes
-	d3.select('#x-axis').call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
-	d3.select('#y-axis').call(yAxis.scale(d3.event.transform.rescaleY(yScale)));
-}
-var zoom = d3.zoom().on('zoom', zoomCallback); //create zoom behavior
-d3.select('svg').call(zoom); //apply zoom behavior to svg
+	if(distanceDomain[0] !== undefined && distanceDomain[1] !== undefined){
+		yScale.domain(distanceDomain);
+	}
+
+	if(dateDomain[0] !== undefined && dateDomain[1] !== undefined){
+		xScale.domain(dateDomain);
+	}
+
+	//create axes
+	var xAxis = d3.axisBottom(xScale); //create axis, not yet applied
+	var yAxis = d3.axisLeft(yScale); //create axis, not yet applied
+	d3.select('svg').append('g').attr('id', 'x-axis').attr('transform', 'translate(0,' + HEIGHT + ')').call(xAxis); //apply xAxis, also, x axis must be moved to bottom of svg
+	d3.select('svg').append('g').attr('id', 'y-axis').call(yAxis); //y axis is good as it is, apply it
+
+	//callback for zooming
+	var zoomCallback = function(){
+		lastTransform = d3.event.transform; //save the transform for later inversion with clicks
+		d3.select('#points').attr("transform", d3.event.transform); //apply transform to g element containing circles
+		//recalculate the axes
+		d3.select('#x-axis').call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
+		d3.select('#y-axis').call(yAxis.scale(d3.event.transform.rescaleY(yScale)));
+	}
+	var zoom = d3.zoom().on('zoom', zoomCallback); //create zoom behavior
+	d3.select('svg').call(zoom); //apply zoom behavior to svg
+
+	generateCircles(null, data);
+});
